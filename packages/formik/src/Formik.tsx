@@ -12,8 +12,7 @@ import {
   FieldMetaProps,
   FieldHelperProps,
   FieldInputProps,
-  FormikHelpers,
-  FormikHandlers,
+  FormikHelpers, FormikHandlers,
 } from './types';
 import {
   isFunction,
@@ -456,13 +455,7 @@ export function useFormik<Values extends FormikValues = FormikValues>({
         validateFormWithLowPriority(initialValues.current);
       }
     }
-  }, [
-    enableReinitialize,
-    props.initialValues,
-    resetForm,
-    validateOnMount,
-    validateFormWithLowPriority,
-  ]);
+  }, [enableReinitialize, props.initialValues, resetForm, validateOnMount, validateFormWithLowPriority]);
 
   React.useEffect(() => {
     if (
