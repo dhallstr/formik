@@ -12,7 +12,8 @@ import {
   FieldMetaProps,
   FieldHelperProps,
   FieldInputProps,
-  FormikHelpers, FormikHandlers,
+  FormikHelpers,
+  FormikHandlers,
 } from './types';
 import {
   isFunction,
@@ -364,6 +365,16 @@ export function useFormik<Values extends FormikValues = FormikValues>({
     }
   );
 
+  React.useEffect(() => {
+    if (
+      validateOnMount &&
+      isMounted.current === true &&
+      isEqual(initialValues.current, props.initialValues)
+    ) {
+      validateFormWithLowPriority(initialValues.current);
+    }
+  }, [validateOnMount, validateFormWithLowPriority]);
+
   const resetForm = React.useCallback(
     (nextState?: Partial<FormikState<Values>>) => {
       const values =
@@ -433,18 +444,25 @@ export function useFormik<Values extends FormikValues = FormikValues>({
 
   React.useEffect(() => {
     if (
-      enableReinitialize &&
       isMounted.current === true &&
       !isEqual(initialValues.current, props.initialValues)
     ) {
-      initialValues.current = props.initialValues;
-      resetForm();
-    }
+      if (enableReinitialize) {
+        initialValues.current = props.initialValues;
+        resetForm();
+      }
 
-    if (validateOnMount && isMounted.current === true) {
-      validateFormWithLowPriority(initialValues.current);
+      if (validateOnMount) {
+        validateFormWithLowPriority(initialValues.current);
+      }
     }
-  }, [enableReinitialize, props.initialValues, resetForm, validateOnMount, validateFormWithLowPriority]);
+  }, [
+    enableReinitialize,
+    props.initialValues,
+    resetForm,
+    validateOnMount,
+    validateFormWithLowPriority,
+  ]);
 
   React.useEffect(() => {
     if (
